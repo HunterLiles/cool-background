@@ -60,6 +60,16 @@ async function main() {
   });
 
   function render(time) {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+
+      gl.viewport(0, 0, width, height);
+    }
+
     gl.uniform1f(timeLoc, time * 0.001);
     gl.uniform2f(resLoc, canvas.width, canvas.height);
     gl.uniform2f(mouseLoc, mouseX, mouseY);
