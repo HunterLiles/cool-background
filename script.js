@@ -1,9 +1,17 @@
+function hexToVec3(hex) {
+  hex = hex.replace("#", "");
+
+  return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+}
+
 async function main() {
   const canvas = document.querySelector("#background");
-  const gl = canvas.getContext("webgl2", { alpha: false });
+  const gl = canvas.getContext("webgl2", { alpha: true });
 
   // splitting up the glsl file into fragment and vertex
-  const source = await fetch("background-shader.glsl").then((r) => r.text());
+  const response = await fetch(canvas.dataset.shader);
+  if (!response.ok) throw new Error("Shader HTTP ${response.status}");
+  const source = await response.text();
 
   const [vertex, fragment] = source.split("// @fragment");
 
@@ -11,7 +19,7 @@ async function main() {
   const fragmentSource = fragment.trim();
 
   // compiling shader
-  function compShader(gl, type, source) {
+  function compShader(type, source) {
     const shader = gl.createShader(type);
 
     gl.shaderSource(shader, source);
@@ -27,8 +35,8 @@ async function main() {
   // creating program and linking compiled shaders
   const program = gl.createProgram();
 
-  const vertexShader = compShader(gl, gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+  const vertexShader = compShader(gl.VERTEX_SHADER, vertexSource);
+  const fragmentShader = compShader(gl.FRAGMENT_SHADER, fragmentSource);
 
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
@@ -41,15 +49,22 @@ async function main() {
 
   gl.useProgram(program);
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.bindVertexArray(gl.createVertexArray());
-
   const timeLoc = gl.getUniformLocation(program, "u_time");
   const resLoc = gl.getUniformLocation(program, "u_resolution");
   const mouseLoc = gl.getUniformLocation(program, "u_mouse");
+  const lowLoc = gl.getUniformLocation(program, "u_bg");
+  const highLoc = gl.getUniformLocation(program, "u_accent");
+
+  function updateShaderColors() {
+    const style = getComputedStyle(document.documentElement);
+
+    const low = style.getPropertyValue("--bg-color").trim();
+    const high = style.getPropertyValue("--accent").trim();
+
+    gl.uniform3fv(lowLoc, hexToVec3(low));
+    gl.uniform3fv(highLoc, hexToVec3(high));
+  }
+  updateShaderColors();
 
   let mouseX = -10000;
   let mouseY = -10000;
@@ -57,6 +72,10 @@ async function main() {
   window.addEventListener("pointermove", (event) => {
     mouseX = event.clientX;
     mouseY = canvas.height - event.clientY;
+  });
+  document.addEventListener("pointerleave", () => {
+    mouseX = -10000;
+    mouseY = -10000;
   });
 
   function render(time) {
@@ -82,4 +101,8 @@ async function main() {
   requestAnimationFrame(render);
 }
 
-main(); // actually run the main function
+main().catch((error) => {
+  console.error(error);
+  document.querySelector("#background").hidden = true;
+  document.querySelector("#shader-error").hidden = false;
+});

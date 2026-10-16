@@ -15,6 +15,8 @@ precision highp int;
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
+uniform vec3 u_bg;
+uniform vec3 u_accent;
 
 out vec4 fragColor;
 
@@ -26,14 +28,7 @@ const uint glyphs[6] = uint[6](0u,        // space
                                0xE8F4AEu  // @
 );
 
-void main() {
-  vec2 cellSize = vec2(8.0, 12.0);
-  vec2 cell = floor(gl_FragCoord.xy / cellSize);
-
-  vec2 p = ((cell + 0.5) * cellSize - u_resolution * 0.5) / u_resolution.y;
-
-  // Get mouse in the same view as the screen
-  vec2 mouse = (u_mouse - u_resolution * 0.5) / u_resolution.y;
+float wave(vec2 p, vec2 mouse) {
   float dist = length(p - mouse);
 
   vec2 warped = p;
@@ -53,22 +48,39 @@ void main() {
   float falloff = 1.0 - smoothstep(0.0, 0.10, dist);
   height -= 0.4 * falloff;
 
-  // Final, normalized height value
+  return height;
+}
+
+float ascii(vec2 local, int index) {
+  vec2 uv = (local - 0.2) / 0.7;
+
+  if (uv.x < 0.0 || uv.x >= 1.0 || uv.y < 0.0 || uv.y >= 1.0)
+    return 0.0;
+
+  ivec2 pixel = ivec2(floor(uv * 5.0));
+  uint bit = uint(pixel.y * 5 + pixel.x);
+
+  return float((glyphs[index] >> bit) & 1u);
+}
+
+void main() {
+  vec2 cellSize = vec2(8.0, 12.0);
+  vec2 cell = floor(gl_FragCoord.xy / cellSize);
+
+  vec2 p = ((cell + 0.5) * cellSize - u_resolution * 0.5) / u_resolution.y;
+
+  // Get mouse in the same view as the screen
+  vec2 mouse = (u_mouse - u_resolution * 0.5) / u_resolution.y;
+
+  float height = wave(p, mouse);
   float norm_height = clamp((height - 0.15) / 0.25, 0.0, 1.0);
 
   int index = height <= 0.15 ? 0 : min(int(norm_height * 5.0) + 1, 5);
 
   vec2 local = fract(gl_FragCoord.xy / cellSize);
-  vec2 uv = (local - 0.2) / 0.7;
 
-  float ink = 0.0;
+  float ink = ascii(local, index);
 
-  if (all(greaterThanEqual(uv, vec2(0.0))) && all(lessThan(uv, vec2(1.0)))) {
-    ivec2 pixel = ivec2(floor(uv * 5.0));
-    uint bit = uint(pixel.y * 5 + pixel.x);
-
-    ink = float((glyphs[index] >> bit) & 1u);
-  }
-
-  fragColor = vec4(vec3(0.3, 0.3, 0.4) * ink, 1.0);
+  vec3 baseColor = u_bg;
+  fragColor = vec4(baseColor * ink, 1.0);
 }

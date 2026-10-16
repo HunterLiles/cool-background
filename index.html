@@ -1,20 +1,60 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Hunter Liles" />
-
+    <title>WebGL Backgrounds</title>
     <link rel="stylesheet" href="style.css" />
-
-    <script src="script.js" defer></script>
   </head>
 
-  <body>
-    <canvas id="background"></canvas>
+  <body id="top">
+    <header class="container site-header">
+      <span>Hunter Liles</span>
+    </header>
 
-    <footer>
-      <a href="mailto:contact@hunter-liles.com">conact@hunter-liles.com</a>
+    <main class="container">
+      <section class="intro" aria-labelledby="title">
+        <h1 id="title">WebGL<br /><em>Backgrounds</em></h1>
+        <p>
+          A collection of backgrounds made with WebGL moving through time. These
+          are all animated and are based around 3D shapes.
+        </p>
+      </section>
+
+      <section id="collection" aria-labelledby="collection-title">
+        <div class="section-heading">
+          <h2 id="collection-title">Backgrounds</h2>
+          <span>02 works</span>
+        </div>
+
+        <a class="work" href="pages/wave.html">
+          <span class="number" aria-hidden="true">01</span>
+          <div>
+            <h3>Wave</h3>
+            <p>
+              Simple cos + sin wave with domain warping and simple lambertian
+              lighting using tangent plane normals.
+            </p>
+          </div>
+        </a>
+
+        <a class="work" href="pages/ascii-wave.html">
+          <span class="number" aria-hidden="true">02</span>
+          <div>
+            <h3>Ascii Wave</h3>
+            <p>
+              Same as the regular wave but rendered using ASCII characters
+              instead.
+            </p>
+          </div>
+        </a>
+      </section>
+    </main>
+
+    <footer class="container site-footer">
+      <a href="mailto:contact@hunter-liles.com">contact@hunter-liles.com</a>
+      <a href="#top">↑ Top</a>
     </footer>
   </body>
 </html>

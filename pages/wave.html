@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Hunter Liles" />
+    <title>Wave — WebGL Backgrounds</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+
+  <body class="artwork">
+    <canvas
+      id="background"
+      data-shader="../shaders/wave.glsl"
+      aria-label="Wave artwork"
+    ></canvas>
+
+    <header class="container site-header">
+      <a href="../index.html">← Gallery</a>
+      <nav aria-label="Artwork navigation">
+        <a href="ascii-wave.html" rel="next">Next →</a>
+      </nav>
+    </header>
+
+    <main class="container artwork-caption">
+      <p id="shader-error" role="status" hidden>
+        Shader failed to load (how unfortunate)...
+      </p>
+      <p class="eyebrow">01 / 02</p>
+      <h1>Wave</h1>
+      <p>
+        Simple cos + sin wave with domain warping and simple lambertian lighting
+        using tangent plane normals.
+      </p>
+    </main>
+  </body>
+</html>

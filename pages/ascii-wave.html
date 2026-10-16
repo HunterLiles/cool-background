@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Hunter Liles" />
+    <title>Ascii Wave — WebGL Backgrounds</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../script.js" defer></script>
+  </head>
+
+  <body class="artwork">
+    <canvas
+      id="background"
+      data-shader="../shaders/ascii-wave.glsl"
+      aria-label="Ascii Wave artwork"
+    ></canvas>
+
+    <header class="container site-header">
+      <a href="../index.html">← Gallery</a>
+      <nav aria-label="Artwork navigation">
+        <a href="wave.html" rel="prev">← Previous</a>
+      </nav>
+    </header>
+
+    <main class="container artwork-caption">
+      <p id="shader-error" role="status" hidden>
+        Shader failed to load (how unfortunate)...
+      </p>
+      <p class="eyebrow">02 / 02</p>
+      <h1>Ascii Wave</h1>
+      <p>
+        Same as the regular wave but rendered using ASCII characters instead.
+      </p>
+    </main>
+  </body>
+</html>
