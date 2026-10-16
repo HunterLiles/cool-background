@@ -81,6 +81,6 @@ void main() {
 
   float ink = ascii(local, index);
 
-  vec3 baseColor = u_bg;
+  vec3 baseColor = u_bg * 3.0;
   fragColor = vec4(baseColor * ink, 1.0);
 }
